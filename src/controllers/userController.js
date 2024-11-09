@@ -112,7 +112,6 @@ export const getUserProfile = async (req, res) => {
     }
 };
 
-// Şifre Sıfırlama Talebi
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
@@ -122,32 +121,14 @@ export const forgotPassword = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Token oluştur
         const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '15m' });
 
-        // Şifre sıfırlama bağlantısını oluştur
         const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
 
-        // E-posta gönderme fonksiyonu çağır
         await sendResetEmail(user.email, resetUrl);
 
         res.status(200).json({ message: 'Password reset email sent' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to send password reset email', error: error.message });
-    }
-};
-
-export const validateResetToken = (req, res, next) => {
-    const token = req.query.token || req.body.token;
-    if (!token) {
-        return res.status(400).json({ message: 'Token is required' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;  // Doğrulanan kullanıcı bilgileri `req.user` olarak saklanır
-        next();
-    } catch (error) {
-        return res.status(400).json({ message: 'Invalid or expired token' });
     }
 };

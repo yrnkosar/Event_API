@@ -28,3 +28,17 @@ export const adminOnly = (req, res, next) => {
     next();
 };
 
+export const validateResetToken = (req, res, next) => {
+    const token = req.query.token || req.body.token;
+    if (!token) {
+        return res.status(400).json({ message: 'Token is required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;  
+        next();
+    } catch (error) {
+        return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+};

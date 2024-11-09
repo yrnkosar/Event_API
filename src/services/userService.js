@@ -24,10 +24,10 @@ export const login = async ({ email, password }) => {
 
 export const sendResetEmail = async (toEmail, resetUrl) => {
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        service: 'gmail', 
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
+            user: process.env.EMAIL_USERNAME, 
+            pass: process.env.EMAIL_PASSWORD, 
         }
     });
 

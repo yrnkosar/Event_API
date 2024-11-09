@@ -3,6 +3,7 @@ dotenv.config();
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js'; 
+import {sendResetEmail} from '../services/userService.js'
 
 
 export const registerUser = async (req, res) => {
@@ -48,7 +49,7 @@ export const loginUser = async (req, res) => {
 
         console.log(process.env.JWT_SECRET);
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, role: user.role, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
@@ -108,5 +109,45 @@ export const getUserProfile = async (req, res) => {
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch profile', error: error.message });
+    }
+};
+
+// Şifre Sıfırlama Talebi
+export const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Token oluştur
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+        // Şifre sıfırlama bağlantısını oluştur
+        const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
+
+        // E-posta gönderme fonksiyonu çağır
+        await sendResetEmail(user.email, resetUrl);
+
+        res.status(200).json({ message: 'Password reset email sent' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to send password reset email', error: error.message });
+    }
+};
+
+export const validateResetToken = (req, res, next) => {
+    const token = req.query.token || req.body.token;
+    if (!token) {
+        return res.status(400).json({ message: 'Token is required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;  // Doğrulanan kullanıcı bilgileri `req.user` olarak saklanır
+        next();
+    } catch (error) {
+        return res.status(400).json({ message: 'Invalid or expired token' });
     }
 };

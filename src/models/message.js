@@ -1,4 +1,3 @@
-// src/models/Message.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './user.js';
@@ -34,7 +33,6 @@ const Message = sequelize.define('Message', {
     },
 }, { timestamps: false });
 
-// İlişkiler
 Message.belongsTo(User, { foreignKey: 'user_id' });
 Message.belongsTo(Event, { foreignKey: 'event_id' });
 

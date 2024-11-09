@@ -1,4 +1,3 @@
-// src/routes/adminRoutes.js
 import express from 'express';
 import { protect, adminOnly } from '../utils/authMiddleware.js';
 import { getUsers, deleteUser } from '../controllers/adminController.js';

@@ -1,4 +1,3 @@
-// src/models/Point.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './user.js';
@@ -11,7 +10,7 @@ const Point = sequelize.define('Point', {
             model: User,
             key: 'id',
         },
-        primaryKey: true, // user_id PRIMARY KEY olarak tanımlanır
+        primaryKey: true,
     },
     event_id: {
         type: DataTypes.INTEGER,
@@ -19,7 +18,7 @@ const Point = sequelize.define('Point', {
             model: Event,
             key: 'id',
         },
-        primaryKey: true, // event_id PRIMARY KEY olarak tanımlanır
+        primaryKey: true, 
     },
     points: {
         type: DataTypes.INTEGER,
@@ -31,11 +30,10 @@ const Point = sequelize.define('Point', {
     },
 }, { 
     timestamps: false,
-    tableName: 'points', // Tablo adını belirtmek önemli
-    primaryKey: false // Anahtar ikilisi kullanıldığında primaryKey: false olmalı
+    tableName: 'points', 
+    primaryKey: false 
 });
 
-// İlişkiler
 Point.belongsTo(User, { foreignKey: 'user_id' });
 Point.belongsTo(Event, { foreignKey: 'event_id' });
 

@@ -1,8 +1,7 @@
-// src/models/Event.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
-import User from './user.js'; // User modelini doğru dosyadan import ettiğinizden emin olun
-import Subcategory from './subcategory.js'; // Alt Kategori modelini import edin
+import User from './user.js'; 
+import Subcategory from './subcategory.js'; 
 
 const Event = sequelize.define('Event', {
     id: {
@@ -50,7 +49,6 @@ const Event = sequelize.define('Event', {
     }
 }, { timestamps: false });
 
-// İlişkiler
 Event.belongsTo(User, { foreignKey: 'user_id' });
 User.hasMany(Event, { foreignKey: 'user_id' });
 

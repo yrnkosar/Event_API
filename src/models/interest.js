@@ -1,4 +1,3 @@
-// src/models/Interest.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './user.js';
@@ -11,7 +10,7 @@ const Interest = sequelize.define('Interest', {
             model: User,
             key: 'id',
         },
-        primaryKey: true,  // user_id birincil anahtar olacak
+        primaryKey: true,  
     },
     subcategory_id: {
         type: DataTypes.INTEGER,
@@ -19,11 +18,10 @@ const Interest = sequelize.define('Interest', {
             model: Subcategory,
             key: 'id',
         },
-        primaryKey: true,  // subcategory_id birincil anahtar olacak
+        primaryKey: true,  
     },
 }, { timestamps: false });
 
-// İlişkiler
 Interest.belongsTo(User, { foreignKey: 'user_id' });
 Interest.belongsTo(Subcategory, { foreignKey: 'subcategory_id' });
 

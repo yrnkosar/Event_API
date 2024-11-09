@@ -199,17 +199,12 @@ async function insertPoints(points) {
 
 async function hashUserPasswords() {
   try {
-    // Tüm kullanıcıları al
     const users = await User.findAll();
 
-    // Kullanıcılar üzerinde döngü yap
     for (let user of users) {
-      // Eğer şifre zaten hash'lenmişse, tekrar işlem yapmaya gerek yok
-      if (!user.password.startsWith('$2b$')) {  // Bcrypt hash'leri '$2b$' ile başlar
-        // Şifreyi hash'le
+      if (!user.password.startsWith('$2b$')) { 
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
-        // Hash'lenmiş şifreyi veritabanına kaydet
         user.password = hashedPassword;
         await user.save();
         console.log(`Şifre güncellendi: ${user.username}`);

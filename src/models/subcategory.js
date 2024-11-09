@@ -1,4 +1,3 @@
-// src/models/Subcategory.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import Category from './category.js';
@@ -22,7 +21,6 @@ const Subcategory = sequelize.define('Subcategory', {
     },
 }, { timestamps: false });
 
-// İlişkiler
 Subcategory.belongsTo(Category, { foreignKey: 'category_id' });
 Category.hasMany(Subcategory, { foreignKey: 'category_id' });
 

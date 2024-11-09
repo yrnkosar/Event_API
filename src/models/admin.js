@@ -1,4 +1,3 @@
-// src/models/Admin.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 
@@ -18,11 +17,11 @@ const Admin = sequelize.define('Admin', {
         unique: true,
     },
     role: {
-        type: DataTypes.ENUM('superadmin', 'moderator', 'admin'), // Farklı admin seviyeleri ekleyebilirsiniz
+        type: DataTypes.ENUM('superadmin', 'moderator', 'admin'), 
         defaultValue: 'admin',
     },
     permissions: {
-        type: DataTypes.JSON, // JSON yapısı ile özelleştirilmiş izinler saklanabilir
+        type: DataTypes.JSON, 
         allowNull: true,
     },
 }, { timestamps: true });

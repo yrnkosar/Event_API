@@ -1,4 +1,3 @@
-// src/controllers/adminController.js
 import User from '../models/user.js';
 
 export const getUsers = async (req, res) => {

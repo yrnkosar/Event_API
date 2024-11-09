@@ -1,4 +1,3 @@
-// src/services/userService.mjs
 import User from '../models/User.mjs';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';

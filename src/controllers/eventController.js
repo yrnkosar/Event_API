@@ -1,4 +1,3 @@
-import Event from '../models/event.js';
 import { createEventService, deleteEventService, updateEventService, getEventService } from '../services/eventService.js';
 
 export const createEvent = async (req, res) => {

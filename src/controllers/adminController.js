@@ -1,8 +1,20 @@
-import User from '../models/user.js';
+import { 
+    getUsersService, deleteUserService, 
+    getEventsService, deleteEventService, 
+    getCategoriesWithSubcategories,
+    createCategory,
+    createSubcategory,
+    updateCategory,
+    updateSubcategory,
+    deleteCategory,
+    deleteSubcategory,
+    getCategoriesService
+} from '../services/adminService.js';
 
+// User işlemleri
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.findAll();
+        const users = await getUsersService();
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: 'Failed to retrieve users' });
@@ -11,13 +23,109 @@ export const getUsers = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        await user.destroy();
+        await deleteUserService(req.params.id);
         res.status(200).json({ message: 'User deleted' });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to delete user' });
+        res.status(500).json({ message: error.message || 'Failed to delete user' });
+    }
+};
+
+// Event işlemleri
+export const getEvents = async (req, res) => {
+    try {
+        const events = await getEventsService();
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve events' });
+    }
+};
+
+export const deleteEvent = async (req, res) => {
+    try {
+        await deleteEventService(req.params.id);
+        res.status(200).json({ message: 'Event deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Failed to delete event' });
+    }
+};
+
+export const getCategories = async (req, res) => {
+    try {
+        const categories = await getCategoriesService();
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve categories' });
+    }
+};
+
+// Kategorileri ve alt kategorileri getirme fonksiyonu (adı değiştirildi)
+export const getCategoriesController = async (req, res) => {
+    try {
+        const categories = await getCategoriesWithSubcategories();
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve categories' });
+    }
+};
+
+export const addCategory = async (req, res) => {
+    const { name } = req.body;
+    try {
+        const category = await createCategory(name);
+        res.status(201).json(category);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to create category' });
+    }
+};
+
+export const addSubcategory = async (req, res) => {
+    const { name, categoryId } = req.body;
+    try {
+        const subcategory = await createSubcategory(name, categoryId);
+        res.status(201).json(subcategory);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to create subcategory' });
+    }
+};
+
+export const updateCategoryById = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    try {
+        const category = await updateCategory(id, name);
+        res.status(200).json(category);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+export const updateSubcategoryById = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    try {
+        const subcategory = await updateSubcategory(id, name);
+        res.status(200).json(subcategory);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+export const removeCategory = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const response = await deleteCategory(id);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+export const removeSubcategory = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const response = await deleteSubcategory(id);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
     }
 };

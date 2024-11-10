@@ -55,4 +55,5 @@ User.hasMany(Event, { foreignKey: 'user_id' });
 Event.belongsTo(Subcategory, { foreignKey: 'subcategory_id' });
 Subcategory.hasMany(Event, { foreignKey: 'subcategory_id' });
 
+
 export default Event;

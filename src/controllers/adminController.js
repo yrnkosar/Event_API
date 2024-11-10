@@ -11,7 +11,6 @@ import {
     getCategoriesService
 } from '../services/adminService.js';
 
-// User işlemleri
 export const getUsers = async (req, res) => {
     try {
         const users = await getUsersService();
@@ -30,7 +29,6 @@ export const deleteUser = async (req, res) => {
     }
 };
 
-// Event işlemleri
 export const getEvents = async (req, res) => {
     try {
         const events = await getEventsService();
@@ -49,6 +47,7 @@ export const deleteEvent = async (req, res) => {
     }
 };
 
+
 export const getCategories = async (req, res) => {
     try {
         const categories = await getCategoriesService();
@@ -58,7 +57,6 @@ export const getCategories = async (req, res) => {
     }
 };
 
-// Kategorileri ve alt kategorileri getirme fonksiyonu (adı değiştirildi)
 export const getCategoriesController = async (req, res) => {
     try {
         const categories = await getCategoriesWithSubcategories();

@@ -1,6 +1,8 @@
 import Event from '../models/event.js';
 import User from '../models/user.js';
 import Subcategory from '../models/subcategory.js';
+import Category from '../models/category.js';
+import { Op } from 'sequelize';
 
 export const createEventService = async (data) => {
     try {
@@ -51,5 +53,43 @@ export const getEventService = async (id) => {
         return event;
     } catch (error) {
         throw new Error('Failed to fetch event');
+    }
+};
+
+export const getEventsByCategory = async (categoryId, subcategoryId) => {
+    try {
+        const events = await Event.findAll({
+            include: [
+                {
+                    model: Subcategory,
+                    where: { id: subcategoryId },
+                    include: [
+                        {
+                            model: Category,
+                            where: { id: categoryId },
+                        }
+                    ]
+                }
+            ]
+        });
+        return events;
+    } catch (error) {
+        throw new Error('Etkinlikler getirilemedi');
+    }
+};
+
+export const getEventsByDateRange = async (startDate, endDate) => {
+    try {
+        const events = await Event.findAll({
+            where: {
+                date: {
+                    [Op.gte]: startDate, 
+                    [Op.lte]: endDate,   
+                }
+            }
+        });
+        return events;
+    } catch (error) {
+        throw new Error('Failed to fetch events by date range');
     }
 };

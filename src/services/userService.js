@@ -26,13 +26,13 @@ export const sendResetEmail = async (toEmail, resetUrl) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail', 
         auth: {
-            user: process.env.EMAIL_USERNAME, 
-            pass: process.env.EMAIL_PASSWORD, 
+            user: process.env.SMTP_USER,  // Ensure this is correct
+            pass: process.env.SMTP_PASS,  // Ensure this is correct
         }
     });
 
     const mailOptions = {
-        from: process.env.SMTP_USER,
+        from: process.env.SMTP_USER,  // Ensure this is correct
         to: toEmail,
         subject: 'Şifre Sıfırlama Talebi',
         html: `

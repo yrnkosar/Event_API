@@ -5,7 +5,7 @@ import { getUsers, deleteUser, getEvents, deleteEvent,
     updateCategoryById,
     updateSubcategoryById,
     removeCategory,
-    removeSubcategory,getCategories
+    removeSubcategory,getCategories, getCategoriesController
  } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -19,14 +19,15 @@ router.get('/events', getEvents);
 router.delete('/events/:id', deleteEvent);
 
 // Kategoriler ve alt kategorileri getirme
-//router.get('/categories', getCategories);
 
 // Yeni kategori ekleme
 router.get('/categories', getCategories);
-router.post('/categories/add', addCategory);
 
+router.post('/add-categories', addCategory);
+
+router.get('/subcategories', getCategoriesController);
 // Yeni alt kategori ekleme
-router.post('/subcategories', addSubcategory);
+router.post('/add-subcategory', addSubcategory);
 
 // Kategori güncelleme
 router.put('/categories/:id', updateCategoryById);

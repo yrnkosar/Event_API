@@ -8,12 +8,12 @@ router.post('/register', registerUser);
 
 router.post('/login', loginUser);
 
-router.post('/reset-password', validateResetToken, resetPassword);
-
 router.put('/update-profile', protect, updateProfile);
 
 router.get('/profile', protect, getUserProfile);
 
 router.post('/forgot-password', forgotPassword);
+
+router.post('/reset-password', validateResetToken, resetPassword);
 
 export default router;

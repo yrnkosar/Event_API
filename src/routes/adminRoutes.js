@@ -9,26 +9,27 @@ import { getUsers, deleteUser, getEvents, deleteEvent,
     getCategories, 
     getCategoriesController
  } from '../controllers/adminController.js';
+ import { protect, adminOnly } from '../utils/authMiddleware.js';
 
 const router = express.Router();
 
 
-router.get('/users', getUsers);
-router.delete('/users/:id', deleteUser);
+router.get('/users', protect, adminOnly, getUsers);
+router.delete('/users/:id', protect, adminOnly, deleteUser);
 
 
-router.get('/events', getEvents);
-router.delete('/events/:id', deleteEvent);
+router.get('/events', protect, adminOnly, getEvents);
+router.delete('/events/:id', protect, adminOnly, deleteEvent);
 
 
-router.get('/categories', getCategories);
-router.post('/add-categories', addCategory);
-router.put('/categories/:id', updateCategoryById);
-router.delete('/categories/:id', removeCategory);
+router.get('/categories', protect, adminOnly, getCategories);
+router.post('/add-categories', protect, adminOnly, addCategory);
+router.put('/categories/:id', protect, adminOnly, updateCategoryById);
+router.delete('/categories/:id', protect, adminOnly, removeCategory);
 
-router.get('/subcategories', getCategoriesController);
-router.post('/add-subcategory', addSubcategory);
-router.put('/subcategories/:id', updateSubcategoryById);
-router.delete('/subcategories/:id', removeSubcategory);
+router.get('/subcategories', protect, adminOnly, getCategoriesController);
+router.post('/add-subcategory', protect, adminOnly, addSubcategory);
+router.put('/subcategories/:id', protect, adminOnly, updateSubcategoryById);
+router.delete('/subcategories/:id', protect, adminOnly, removeSubcategory);
 
 export default router;

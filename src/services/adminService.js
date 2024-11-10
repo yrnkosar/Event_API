@@ -7,6 +7,18 @@ export const getUsersService = async () => {
     return await User.findAll();
 };
 
+export const getUserByIdService = async (userId) => {
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 export const deleteUserService = async (id) => {
     const user = await User.findByPk(id);
     if (!user) throw new Error('User not found');

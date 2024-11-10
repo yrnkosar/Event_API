@@ -2,6 +2,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import dotenv from 'dotenv';
+import Event from '../models/event.js';
+import Participant from '../models/participant.js';
+import Subcategory from '../models/subcategory.js'; 
+
 
 dotenv.config();
 
@@ -97,6 +101,38 @@ const sendResetEmail = async (toEmail, resetUrl) => {
     } catch (error) {
         console.error('E-posta gönderim hatası:', error);
         throw new Error('Şifre sıfırlama e-postası gönderilemedi');
+    }
+};
+
+export const getUserEventsService = async (userId) => {
+    try {
+        const createdEvents = await Event.findAll({
+            where: { user_id: userId },
+            include: [
+                { model: User, attributes: ['username', 'email'] }, 
+                { model: Subcategory, attributes: ['name'] }, 
+            ]
+        });
+
+        const participatedEvents = await Participant.findAll({
+            where: { user_id: userId },
+            include: [
+                {
+                    model: Event,
+                    include: [
+                        { model: User, attributes: ['username'] }, 
+                        { model: Subcategory, attributes: ['name'] }, 
+                    ]
+                }
+            ]
+        });
+
+        return {
+            createdEvents,   
+            participatedEvents, 
+        };
+    } catch (error) {
+        throw new Error('Error retrieving events: ' + error.message);
     }
 };
 

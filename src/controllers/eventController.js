@@ -1,4 +1,4 @@
-import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange } from '../services/eventService.js';
+import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange, joinEventService } from '../services/eventService.js';
 
 export const createEvent = async (req, res) => {
     const { name, description, date, time, duration, latitude, longitude, user_id, subcategory_id } = req.body;
@@ -77,5 +77,17 @@ export const controllergetEventsByDate = async (req, res) => {
         res.status(200).json({ events, total: eventCount });
     } catch (error) {
         res.status(500).json({ message: 'Failed to retrieve events by date range', error: error.message });
+    }
+};
+
+export const joinEvent = async (req, res) => {
+    const userId = req.user.id;  // Kullanıcının ID'si
+    const eventId = req.params.eventId;  // Etkinlik ID'si
+
+    try {
+        const participant = await joinEventService(userId, eventId);
+        res.status(200).json({ message: 'Joined event successfully', participant });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to join event', error: error.message });
     }
 };

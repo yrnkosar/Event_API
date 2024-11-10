@@ -2,6 +2,7 @@ import Event from '../models/event.js';
 import User from '../models/user.js';
 import Subcategory from '../models/subcategory.js';
 import Category from '../models/category.js';
+import Participant from '../models/participant.js';
 import { Op } from 'sequelize';
 
 export const createEventService = async (data) => {
@@ -91,5 +92,21 @@ export const getEventsByDateRange = async (startDate, endDate) => {
         return events;
     } catch (error) {
         throw new Error('Failed to fetch events by date range');
+    }
+};
+
+export const joinEventService = async (userId, eventId) => {
+    try {
+        // Kullanıcı daha önce bu etkinliğe katılmış mı kontrol et
+        const existingParticipant = await Participant.findOne({ where: { user_id: userId, event_id: eventId } });
+        if (existingParticipant) {
+            throw new Error('User has already joined this event');
+        }
+
+        // Yeni katılım kaydını oluştur
+        const newParticipant = await Participant.create({ user_id: userId, event_id: eventId });
+        return newParticipant;
+    } catch (error) {
+        throw new Error('Error joining event: ' + error.message);
     }
 };

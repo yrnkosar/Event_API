@@ -7,7 +7,8 @@ import { getUsers, deleteUser, getEvents, deleteEvent,
     removeCategory,
     removeSubcategory,
     getCategories, 
-    getCategoriesController
+    getCategoriesController,
+    getOneUserById
  } from '../controllers/adminController.js';
  import { protect, adminOnly } from '../utils/authMiddleware.js';
 
@@ -15,7 +16,8 @@ const router = express.Router();
 
 
 router.get('/users', protect, adminOnly, getUsers);
-router.delete('/users/:id', protect, adminOnly, deleteUser);
+router.delete('/delete-user/:id', protect, adminOnly, deleteUser);
+router.get('/user/:id', protect, getOneUserById);
 
 
 router.get('/events', protect, adminOnly, getEvents);

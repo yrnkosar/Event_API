@@ -4,7 +4,8 @@ import {
     resetPasswordService,
     updateProfileService,
     getUserProfileService,
-    forgotPasswordService
+    forgotPasswordService,
+    getUserEventsService
 } from '../services/userService.js';
 
 export const registerUser = async (req, res) => {
@@ -70,5 +71,20 @@ export const forgotPassword = async (req, res) => {
         res.status(200).json({ message: 'Password reset email sent' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to send password reset email', error: error.message });
+    }
+};
+
+export const getUserEventsController = async (req, res) => {
+    const { id } = req.user;
+
+    try {
+        const { createdEvents, participatedEvents } = await getUserEventsService(id);
+
+        res.status(200).json({
+            createdEvents,    
+            participatedEvents,  
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to get events', error: error.message });
     }
 };

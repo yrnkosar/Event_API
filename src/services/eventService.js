@@ -57,6 +57,12 @@ export const getEventService = async (id) => {
     }
 };
 
+export const getAllEventsService = async () => {
+    return await Event.findAll({
+        where: { status: true } 
+    });
+};
+
 export const getEventsByCategory = async (categoryId, subcategoryId) => {
     try {
         const events = await Event.findAll({
@@ -97,13 +103,11 @@ export const getEventsByDateRange = async (startDate, endDate) => {
 
 export const joinEventService = async (userId, eventId) => {
     try {
-        // Kullanıcı daha önce bu etkinliğe katılmış mı kontrol et
         const existingParticipant = await Participant.findOne({ where: { user_id: userId, event_id: eventId } });
         if (existingParticipant) {
             throw new Error('User has already joined this event');
         }
 
-        // Yeni katılım kaydını oluştur
         const newParticipant = await Participant.create({ user_id: userId, event_id: eventId });
         return newParticipant;
     } catch (error) {

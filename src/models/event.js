@@ -46,6 +46,11 @@ const Event = sequelize.define('Event', {
             model: Subcategory,
             key: 'id'
         }
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false, 
     }
 }, { timestamps: false });
 

@@ -1,7 +1,8 @@
-import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange, joinEventService } from '../services/eventService.js';
+import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange, joinEventService, getAllEventsService } from '../services/eventService.js';
 
 export const createEvent = async (req, res) => {
-    const { name, description, date, time, duration, latitude, longitude, user_id, subcategory_id } = req.body;
+    const { name, description, date, time, duration, latitude, longitude, subcategory_id } = req.body;
+    const user_id = req.user.id;
 
     try {
         const newEvent = await createEventService({ name, description, date, time, duration, latitude, longitude, user_id, subcategory_id });
@@ -45,6 +46,15 @@ export const getEvent = async (req, res) => {
     }
 };
 
+export const getAllEvents = async (req, res) => {
+    try {
+        const events = await getAllEventsService();
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve events' });
+    }
+};
+
 export const getEventsByCategoryAndSubcategory = async (req, res) => {
     const { categoryId, subcategoryId } = req.query;
     console.log(categoryId, subcategoryId);
@@ -81,8 +91,8 @@ export const controllergetEventsByDate = async (req, res) => {
 };
 
 export const joinEvent = async (req, res) => {
-    const userId = req.user.id;  // Kullanıcının ID'si
-    const eventId = req.params.eventId;  // Etkinlik ID'si
+    const userId = req.user.id;  
+    const eventId = req.params.eventId;  
 
     try {
         const participant = await joinEventService(userId, eventId);

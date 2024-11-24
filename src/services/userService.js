@@ -5,19 +5,29 @@ import dotenv from 'dotenv';
 import Event from '../models/event.js';
 import Participant from '../models/participant.js';
 import Subcategory from '../models/subcategory.js'; 
-
+import Interest from '../models/interest.js';
+import nodemailer from 'nodemailer'; 
 
 dotenv.config();
 
 export const registerUserService = async (userData) => {
-    const { password, ...otherData } = userData;
+    const { password, subcategory_ids, ...otherData } = userData; 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
         ...otherData,
         password: hashedPassword,
-        role: 'kullanıcı'
+        role: 'kullanıcı',
     });
+
+    if (subcategory_ids && subcategory_ids.length > 0) {
+        const interests = subcategory_ids.map(subcategory_id => ({
+            user_id: newUser.id,
+            subcategory_id
+        }));
+
+        await Interest.bulkCreate(interests);
+    }
 
     return newUser;
 };

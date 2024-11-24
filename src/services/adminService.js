@@ -35,6 +35,23 @@ export const deleteEventService = async (id) => {
     await event.destroy();
 };
 
+export const updateEventStatus = async (eventId) => {
+    try {
+        const event = await Event.findByPk(eventId);
+
+        if (!event) {
+            throw new Error('Event not found');
+        }
+
+        event.status = true;
+        await event.save();
+
+        return event;
+    } catch (error) {
+        throw new Error('Error updating event status: ' + error.message);
+    }
+};
+
 
 export const getCategoriesService = async () => {
     return await Category.findAll();

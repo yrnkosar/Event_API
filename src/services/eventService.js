@@ -103,14 +103,63 @@ export const getEventsByDateRange = async (startDate, endDate) => {
 
 export const joinEventService = async (userId, eventId) => {
     try {
-        const existingParticipant = await Participant.findOne({ where: { user_id: userId, event_id: eventId } });
-        if (existingParticipant) {
-            throw new Error('User has already joined this event');
+        const eventToJoin = await Event.findByPk(eventId);
+
+        if (!eventToJoin) {
+            throw new Error('Event not found');
         }
 
-        const newParticipant = await Participant.create({ user_id: userId, event_id: eventId });
-        return newParticipant;
+        const durationMatch = eventToJoin.duration.match(/^(\d+)/); 
+        if (!durationMatch) {
+            throw new Error('Invalid duration format. Expected a numeric value.');
+        }
+        const durationInHours = parseInt(durationMatch[1], 10);
+
+        const startDateTime = new Date(eventToJoin.date);
+        const timeParts = eventToJoin.time.split(':'); 
+        startDateTime.setHours(timeParts[0], timeParts[1]);
+
+        const eventToJoinEndDate = new Date(startDateTime);
+        eventToJoinEndDate.setHours(eventToJoinEndDate.getHours() + durationInHours);
+
+        const userParticipants = await Participant.findAll({
+            where: { user_id: userId },
+            include: [{ model: Event }],
+        });
+
+        const overlappingEvent = userParticipants.find((participant) => {
+            const joinedEvent = participant.Event;
+
+            const joinedStartDateTime = new Date(joinedEvent.date);
+            const joinedTimeParts = joinedEvent.time.split(':');
+            joinedStartDateTime.setHours(joinedTimeParts[0], joinedTimeParts[1]);
+
+            const joinedEventEndDate = new Date(joinedStartDateTime);
+            const joinedDurationMatch = joinedEvent.duration.match(/^(\d+)/);
+            const joinedDurationInHours = joinedDurationMatch ? parseInt(joinedDurationMatch[1], 10) : 0;
+
+            joinedEventEndDate.setHours(joinedEventEndDate.getHours() + joinedDurationInHours);
+
+            return (
+                (startDateTime < joinedEventEndDate && eventToJoinEndDate > joinedStartDateTime)
+            );
+        });
+
+        if (overlappingEvent) {
+            const overlappingEventName = overlappingEvent.Event?.name || 'another event';
+            throw new Error(
+                `You cannot join this event because it overlaps with: ${overlappingEventName}`
+            );
+        }
+
+        const participant = await Participant.create({
+            user_id: userId,
+            event_id: eventId,
+        });
+
+        return participant;
     } catch (error) {
-        throw new Error('Error joining event: ' + error.message);
+        console.error('Error in joinEventService:', error);
+        throw new Error(error.message || 'Unknown error occurred while joining the event');
     }
 };

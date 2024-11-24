@@ -1,6 +1,8 @@
 import { 
-    getUsersService, deleteUserService, 
-    getEventsService, deleteEventService, 
+    getUsersService, 
+    deleteUserService, 
+    getEventsService, 
+    deleteEventService, 
     getCategoriesWithSubcategories,
     createCategory,
     createSubcategory,
@@ -9,7 +11,8 @@ import {
     deleteCategory,
     deleteSubcategory,
     getCategoriesService,
-    getUserByIdService
+    getUserByIdService,
+    updateEventStatus
 } from '../services/adminService.js';
 
 export const getUsers = async (req, res) => {
@@ -56,6 +59,24 @@ export const deleteEvent = async (req, res) => {
         res.status(200).json({ message: 'Event deleted' });
     } catch (error) {
         res.status(500).json({ message: error.message || 'Failed to delete event' });
+    }
+};
+
+export const changeEventStatus = async (req, res) => {
+    const { eventId } = req.params; 
+
+    try {
+        const updatedEvent = await updateEventStatus(eventId);
+
+        res.status(200).json({
+            message: 'Event status updated successfully',
+            event: updatedEvent,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Failed to update event status',
+            error: error.message,
+        });
     }
 };
 

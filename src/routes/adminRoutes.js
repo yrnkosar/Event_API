@@ -8,7 +8,8 @@ import { getUsers, deleteUser, getEvents, deleteEvent,
     removeSubcategory,
     getCategories, 
     getCategoriesController,
-    getOneUserById
+    getOneUserById,
+    changeEventStatus
  } from '../controllers/adminController.js';
  import { protect, adminOnly } from '../utils/authMiddleware.js';
 
@@ -22,6 +23,7 @@ router.get('/user/:id', protect, getOneUserById);
 
 router.get('/events', protect, adminOnly, getEvents);
 router.delete('/events/:id', protect, adminOnly, deleteEvent);
+router.patch('/events/:eventId/status', protect, adminOnly, changeEventStatus);
 
 
 router.get('/categories', protect, adminOnly, getCategories);

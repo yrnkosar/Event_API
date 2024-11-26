@@ -9,7 +9,12 @@ import { getUsers, deleteUser, getEvents, deleteEvent,
     getCategories, 
     getCategoriesController,
     getOneUserById,
-    changeEventStatus
+    changeEventStatus,
+    getTotalUsers,
+    getAgeDemographicsData,
+    getTotalEvents,
+    getEventsByMonth,
+    getEventsByCategory,
  } from '../controllers/adminController.js';
  import { protect, adminOnly } from '../utils/authMiddleware.js';
 
@@ -35,5 +40,11 @@ router.get('/subcategories', protect, adminOnly, getCategoriesController);
 router.post('/add-subcategory', protect, adminOnly, addSubcategory);
 router.put('/subcategories/:id', protect, adminOnly, updateSubcategoryById);
 router.delete('/subcategories/:id', protect, adminOnly, removeSubcategory);
+
+router.get('/total-users', getTotalUsers);
+router.get('/age-demographics', getAgeDemographicsData);
+router.get('/total-events', getTotalEvents);
+router.get('/events-by-month', getEventsByMonth);
+router.get('/events-by-category', getEventsByCategory);
 
 export default router;

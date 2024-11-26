@@ -5,10 +5,7 @@ import Participant from '../models/participant.js'
 export const getUserPoints = async (userId) => {
     try {
         const points = await Point.findAll({
-            where: { user_id: userId },
-            include: [
-                { model: Event, attributes: ['id', 'name'] } 
-            ]
+            where: { user_id: userId }
         });
         
         return points;

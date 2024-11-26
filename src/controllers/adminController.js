@@ -12,7 +12,12 @@ import {
     deleteSubcategory,
     getCategoriesService,
     getUserByIdService,
-    updateEventStatus
+    updateEventStatus,
+    getTotalUserCount,
+    getAgeDemographics,
+    getTotalEventCount,
+    getEventCountByMonth,
+    getEventCountByCategory,
 } from '../services/adminService.js';
 
 export const getUsers = async (req, res) => {
@@ -158,5 +163,55 @@ export const removeSubcategory = async (req, res) => {
         res.status(200).json(response);
     } catch (error) {
         res.status(404).json({ message: error.message });
+    }
+};
+
+export const getTotalUsers = async (req, res) => {
+    try {
+        const totalUsers = await getTotalUserCount();
+        res.status(200).json({ totalUsers });
+    } catch (error) {
+        console.error('Error fetching total users:', error);
+        res.status(500).json({ error: 'Failed to fetch total user count.' });
+    }
+};
+
+export const getAgeDemographicsData = async (req, res) => {
+    try {
+        const ageDemographics = await getAgeDemographics();
+        res.status(200).json({ ageDemographics });
+    } catch (error) {
+        console.error('Error fetching age demographics:', error);
+        res.status(500).json({ error: 'Failed to fetch age demographics.' });
+    }
+};
+
+export const getTotalEvents = async (req, res) => {
+    try {
+        const totalEvents = await getTotalEventCount();
+        res.status(200).json({ totalEvents });
+    } catch (error) {
+        console.error('Error fetching total events:', error);
+        res.status(500).json({ error: 'Failed to fetch total event count.' });
+    }
+};
+
+export const getEventsByMonth = async (req, res) => {
+    try {
+        const eventsByMonth = await getEventCountByMonth();
+        res.status(200).json({ eventsByMonth });
+    } catch (error) {
+        console.error('Error fetching events by month:', error);
+        res.status(500).json({ error: 'Failed to fetch events by month.' });
+    }
+};
+
+export const getEventsByCategory = async (req, res) => {
+    try {
+        const eventsByCategory = await getEventCountByCategory();
+        res.status(200).json({ eventsByCategory });
+    } catch (error) {
+        console.error('Error fetching events by category:', error);
+        res.status(500).json({ error: 'Failed to fetch events by category.' });
     }
 };

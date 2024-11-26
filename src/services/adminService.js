@@ -2,6 +2,7 @@ import User from '../models/user.js';
 import Event from '../models/event.js';
 import Category from '../models/category.js';
 import Subcategory from '../models/subcategory.js';
+import { Sequelize } from 'sequelize';
 
 export const getUsersService = async () => {
     return await User.findAll();
@@ -107,4 +108,78 @@ export const deleteSubcategory = async (id) => {
         return { message: 'Subcategory deleted' };
     }
     throw new Error('Subcategory not found');
+};
+
+export const getTotalUserCount = async () => {
+    return await User.count();
+};
+
+export const getAgeDemographics = async () => {
+    const ageDemographics = await User.findAll({
+        attributes: [
+            [
+                Sequelize.literal(`
+                    CASE 
+                        WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 15 AND 30 THEN '15-30'
+                        WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 31 AND 45 THEN '31-45'
+                        WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 46 AND 60 THEN '46-60'
+                        ELSE '60+'
+                    END
+                `),
+                'age_group',
+            ],
+            [Sequelize.fn('COUNT', Sequelize.col('id')), 'count']
+        ],
+        group: [Sequelize.literal(`
+            CASE 
+                WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 15 AND 30 THEN '15-30'
+                WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 31 AND 45 THEN '31-45'
+                WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 46 AND 60 THEN '46-60'
+                ELSE '60+'
+            END
+        `)],
+        raw: true,
+    });
+
+    return ageDemographics;
+};
+
+export const getTotalEventCount = async () => {
+    return await Event.count();
+};
+
+export const getEventCountByMonth = async () => {
+    const eventsByMonth = await Event.findAll({
+        attributes: [
+            [Sequelize.literal("MONTH(date)"), 'month'],
+            [Sequelize.fn('COUNT', Sequelize.col('id')), 'count']
+        ],
+        group: [Sequelize.literal("MONTH(date)")],
+        raw: true,
+    });
+    return eventsByMonth;
+};
+
+export const getEventCountByCategory = async () => {
+    const eventsByCategory = await Category.findAll({
+        attributes: [
+            'name',
+            [Sequelize.fn('COUNT', Sequelize.col('Subcategories.Events.id')), 'count']
+        ],
+        include: [
+            {
+                model: Subcategory,
+                attributes: [],
+                include: [
+                    {
+                        model: Event,
+                        attributes: [],
+                    },
+                ],
+            },
+        ],
+        group: ['Category.id'],
+        raw: true,
+    });
+    return eventsByCategory;
 };

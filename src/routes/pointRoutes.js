@@ -4,6 +4,6 @@ import { protect } from '../utils/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/user-points/:userId', protect, getPointsByUser);
+router.get('/user-points', protect, getPointsByUser);
 
 export default router;

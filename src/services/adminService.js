@@ -128,16 +128,20 @@ export const getAgeDemographics = async () => {
                 `),
                 'age_group',
             ],
-            [Sequelize.fn('COUNT', Sequelize.col('id')), 'count']
+            'gender',
+            [Sequelize.fn('COUNT', Sequelize.col('id')), 'count'],
         ],
-        group: [Sequelize.literal(`
-            CASE 
-                WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 15 AND 30 THEN '15-30'
-                WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 31 AND 45 THEN '31-45'
-                WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 46 AND 60 THEN '46-60'
-                ELSE '60+'
-            END
-        `)],
+        group: [
+            Sequelize.literal(`
+                CASE 
+                    WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 15 AND 30 THEN '15-30'
+                    WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 31 AND 45 THEN '31-45'
+                    WHEN (YEAR(CURDATE()) - YEAR(birth_date)) BETWEEN 46 AND 60 THEN '46-60'
+                    ELSE '60+'
+                END
+            `),
+            'gender',
+        ],
         raw: true,
     });
 
@@ -151,10 +155,18 @@ export const getTotalEventCount = async () => {
 export const getEventCountByMonth = async () => {
     const eventsByMonth = await Event.findAll({
         attributes: [
+            [Sequelize.literal("YEAR(date)"), 'year'],
             [Sequelize.literal("MONTH(date)"), 'month'],
             [Sequelize.fn('COUNT', Sequelize.col('id')), 'count']
         ],
-        group: [Sequelize.literal("MONTH(date)")],
+        group: [
+            Sequelize.literal("YEAR(date)"),
+            Sequelize.literal("MONTH(date)")
+        ],
+        order: [
+            [Sequelize.literal("YEAR(date)"), 'ASC'],
+            [Sequelize.literal("MONTH(date)"), 'ASC']
+        ],
         raw: true,
     });
     return eventsByMonth;

@@ -2,7 +2,7 @@ import { getUserInterestsService, getPersonalizedEventRecommendations } from '..
 
 
 export const getUserInterests = async (req, res) => {
-    const { userId } = req.params; 
+    const userId = req.user.id; 
     try {
         const interests = await getUserInterestsService(userId);
         res.status(200).json(interests);
@@ -12,7 +12,7 @@ export const getUserInterests = async (req, res) => {
 };
 
 export const getRecommendations = async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.id;
 
     try {
         const recommendations = await getPersonalizedEventRecommendations(userId);

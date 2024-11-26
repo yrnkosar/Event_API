@@ -1,7 +1,7 @@
 import { getUserPoints, calculateAndSaveUserPoints } from '../services/pointService.js';
 
 export const getPointsByUser = async (req, res) => {
-    const userId = req.params.userId;
+    const userId = req.user.id;
 
     try {
         const points = await calculateAndSaveUserPoints(userId);

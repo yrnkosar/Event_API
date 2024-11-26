@@ -1,5 +1,6 @@
 import Message from '../models/message.js';
 import User from '../models/user.js';
+import Sequelize from 'sequelize';
 
 export const sendMessage = async (userId, eventId, messageText) => {
     const sentTime = new Date(); 
@@ -29,5 +30,29 @@ export const getMessagesByEvent = async (eventId) => {
         return messages;
     } catch (error) {
         throw new Error('Error fetching messages: ' + error.message);
+    }
+};
+
+export const getNewMessages = async (eventId, lastFetchedTime) => {
+    try {
+        const newMessages = await Message.findAll({
+            where: {
+                event_id: eventId,
+                sent_time: {
+                    [Sequelize.Op.gt]: new Date(lastFetchedTime),
+                },
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'username'],
+                },
+            ],
+            order: [['sent_time', 'ASC']],
+        });
+
+        return newMessages;
+    } catch (error) {
+        throw new Error(`Error fetching new messages: ${error.message}`);
     }
 };

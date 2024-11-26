@@ -41,10 +41,10 @@ router.post('/add-subcategory', protect, adminOnly, addSubcategory);
 router.put('/subcategories/:id', protect, adminOnly, updateSubcategoryById);
 router.delete('/subcategories/:id', protect, adminOnly, removeSubcategory);
 
-router.get('/total-users', getTotalUsers);
-router.get('/age-demographics', getAgeDemographicsData);
-router.get('/total-events', getTotalEvents);
-router.get('/events-by-month', getEventsByMonth);
-router.get('/events-by-category', getEventsByCategory);
+router.get('/total-users', protect, adminOnly, getTotalUsers);
+router.get('/age-gender-demographics', protect, adminOnly, getAgeDemographicsData);
+router.get('/total-events', protect, adminOnly, getTotalEvents);
+router.get('/events-by-month', protect, adminOnly, getEventsByMonth);
+router.get('/events-by-category', protect, adminOnly, getEventsByCategory);
 
 export default router;

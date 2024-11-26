@@ -4,7 +4,7 @@ import { protect } from '../utils/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/:userId', protect, getUserInterests);
-router.get('/recommendations/:userId', protect, getRecommendations);
+router.get('/user-interests', protect, getUserInterests);
+router.get('/recommendations', protect, getRecommendations);
 
 export default router;

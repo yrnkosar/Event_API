@@ -60,9 +60,9 @@ export const getPersonalizedEventRecommendations = async (userId) => {
                 subcategory_id: { [Op.in]: allRelevantSubcategoryIds },
                 id: { [Op.notIn]: pastEventIds }, 
                 user_id: { [Op.ne]: userId }, 
-                [Op.and]: [
+                /*[Op.and]: [
                     Sequelize.literal(`CONCAT(date, ' ', time) > NOW()`), 
-                ],
+                ],*/
                 status: true,
             },
             include: [

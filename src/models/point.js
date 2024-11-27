@@ -12,14 +12,6 @@ const Point = sequelize.define('Point', {
         },
         primaryKey: true,
     },
-    event_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Event,
-            key: 'id',
-        },
-        primaryKey: true, 
-    },
     points: {
         type: DataTypes.INTEGER,
         allowNull: false,

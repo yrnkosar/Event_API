@@ -1,6 +1,8 @@
 import Message from '../models/message.js';
 import User from '../models/user.js';
 import Sequelize from 'sequelize';
+import Event from '../models/event.js';
+import Participant from '../models/participant.js';
 
 export const sendMessage = async (userId, eventId, messageText) => {
     const sentTime = new Date(); 
@@ -33,26 +35,42 @@ export const getMessagesByEvent = async (eventId) => {
     }
 };
 
-export const getNewMessages = async (eventId, lastFetchedTime) => {
+export const getNewNotifications = async (userId) => {
     try {
-        const newMessages = await Message.findAll({
+        const user = await User.findByPk(userId, { attributes: ['id', 'last_notification_check'] });
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const lastCheck = user.last_notification_check || new Date(0);
+
+        const participantEvents = await Participant.findAll({
+            where: { user_id: userId },
+            include: [{ model: Event, attributes: ['id', 'name'] }],
+        });
+
+        const eventIds = participantEvents.map(part => part.event_id);
+
+        const newNotifications = await Message.findAll({
             where: {
-                event_id: eventId,
-                sent_time: {
-                    [Sequelize.Op.gt]: new Date(lastFetchedTime),
-                },
+                event_id: { [Sequelize.Op.in]: eventIds },
+                sent_time: { [Sequelize.Op.gt]: lastCheck },
+                user_id: { [Sequelize.Op.ne]: userId },
             },
             include: [
-                {
-                    model: User,
-                    attributes: ['id', 'username'],
-                },
+                { model: User, attributes: ['id', 'username'] },
+                { model: Event, attributes: ['id', 'name'] },
             ],
             order: [['sent_time', 'ASC']],
         });
 
-        return newMessages;
+        // Kullanıcının son bildirim kontrol zamanını güncelle
+        await user.update({ last_notification_check: new Date() });
+
+        return newNotifications;
     } catch (error) {
-        throw new Error(`Error fetching new messages: ${error.message}`);
+        throw new Error(`Error fetching new notifications: ${error.message}`);
     }
 };
+
+

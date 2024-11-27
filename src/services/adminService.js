@@ -53,17 +53,6 @@ export const updateEventStatus = async (eventId) => {
     }
 };
 
-
-export const getCategoriesService = async () => {
-    return await Category.findAll();
-};
-
-export const getCategoriesWithSubcategories = async () => {
-    return await Category.findAll({
-        include: [{ model: Subcategory }]
-    });
-};
-
 export const createCategory = async (name) => {
     return await Category.create({ name });
 };

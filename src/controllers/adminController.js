@@ -2,15 +2,13 @@ import {
     getUsersService, 
     deleteUserService, 
     getEventsService, 
-    deleteEventService, 
-    getCategoriesWithSubcategories,
+    deleteEventService,
     createCategory,
     createSubcategory,
     updateCategory,
     updateSubcategory,
     deleteCategory,
     deleteSubcategory,
-    getCategoriesService,
     getUserByIdService,
     updateEventStatus,
     getTotalUserCount,
@@ -82,25 +80,6 @@ export const changeEventStatus = async (req, res) => {
             message: 'Failed to update event status',
             error: error.message,
         });
-    }
-};
-
-
-export const getCategories = async (req, res) => {
-    try {
-        const categories = await getCategoriesService();
-        res.status(200).json(categories);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve categories' });
-    }
-};
-
-export const getCategoriesController = async (req, res) => {
-    try {
-        const categories = await getCategoriesWithSubcategories();
-        res.status(200).json(categories);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve categories' });
     }
 };
 

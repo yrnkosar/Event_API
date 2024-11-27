@@ -48,6 +48,10 @@ const User = sequelize.define('User', {
     },
     role: {
         type: DataTypes.STRING
+    },
+    last_notification_check: {
+        type: DataTypes.DATE,
+        allowNull: true,
     }
 }, { timestamps: false });
 

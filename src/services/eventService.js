@@ -163,3 +163,13 @@ export const joinEventService = async (userId, eventId) => {
         throw new Error(error.message || 'Unknown error occurred while joining the event');
     }
 };
+
+export const getCategoriesService = async () => {
+    return await Category.findAll();
+};
+
+export const getCategoriesWithSubcategories = async () => {
+    return await Category.findAll({
+        include: [{ model: Subcategory }]
+    });
+};

@@ -1,4 +1,6 @@
-import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange, joinEventService, getAllEventsService } from '../services/eventService.js';
+import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange, joinEventService, getAllEventsService,
+    getCategoriesService, getCategoriesWithSubcategories
+ } from '../services/eventService.js';
 
 export const createEvent = async (req, res) => {
     const { name, description, date, time, duration, latitude, longitude, subcategory_id } = req.body;
@@ -99,5 +101,23 @@ export const joinEvent = async (req, res) => {
         res.status(200).json({ message: 'Joined event successfully', participant });
     } catch (error) {
         res.status(500).json({ message: 'Failed to join event', error: error.message });
+    }
+};
+
+export const getCategories = async (req, res) => {
+    try {
+        const categories = await getCategoriesService();
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve categories' });
+    }
+};
+
+export const getCategoriesController = async (req, res) => {
+    try {
+        const categories = await getCategoriesWithSubcategories();
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve categories' });
     }
 };

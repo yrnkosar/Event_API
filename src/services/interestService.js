@@ -35,6 +35,7 @@ export const getPersonalizedEventRecommendations = async (userId) => {
             where: { user_id: userId },
             include: [{ model: Event, include: [Subcategory] }],
         });
+        const pastEventIds = pastParticipationEvents.map((participation) => participation.Event.id);
         const pastEventSubcategoryIds = pastParticipationEvents.map((participation) => participation.Event.subcategory_id);
         const categoryIdsForPastEvents = pastParticipationEvents.map((participation) => participation.Event.Subcategory.category_id);
 
@@ -44,7 +45,7 @@ export const getPersonalizedEventRecommendations = async (userId) => {
         const otherSubcategoryIdsForPastEvents = otherSubcategoriesForPastEvents.map((subcategory) => subcategory.id);
 
         const allRelevantSubcategoryIds = [...new Set([
-            ...interestSubcategoryIds, 
+            ...interestSubcategoryIds,
             ...pastEventSubcategoryIds,
             ...otherSubcategoryIdsForPastEvents,
         ])];
@@ -56,6 +57,8 @@ export const getPersonalizedEventRecommendations = async (userId) => {
         const recommendedEvents = await Event.findAll({
             where: {
                 subcategory_id: { [Op.in]: allRelevantSubcategoryIds },
+                id: { [Op.notIn]: pastEventIds }, 
+                user_id: { [Op.ne]: userId }, 
                 status: true,
             },
             include: [
@@ -65,7 +68,7 @@ export const getPersonalizedEventRecommendations = async (userId) => {
         });
 
         const weightedEvents = recommendedEvents.map((event) => {
-            let weight = 1;  
+            let weight = 1; 
             if (pastEventSubcategoryIds.includes(event.subcategory_id)) {
                 weight = 2; 
             }
@@ -74,14 +77,15 @@ export const getPersonalizedEventRecommendations = async (userId) => {
         });
 
         const sortedEvents = weightedEvents
-            //.filter((item) => item.distance < 50)
-            .sort((a, b) => (a.distance - b.distance) || (b.weight - a.weight));  
+            //.filter((item) => item.distance < 50) 
+            .sort((a, b) => (a.distance - b.distance) || (b.weight - a.weight)); 
 
         return sortedEvents.map((item) => item.event);
     } catch (error) {
         throw new Error(`Failed to generate recommendations: ${error.message}`);
     }
 };
+
 
 
 /*export const getPersonalizedEventRecommendations = async (userId) => {

@@ -81,7 +81,7 @@ export const getEventsByCategory = async (categoryId, subcategoryId) => {
         });
         return events;
     } catch (error) {
-        throw new Error('Etkinlikler getirilemedi');
+        throw new Error('Failed to fetch events');
     }
 };
 

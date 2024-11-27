@@ -1,4 +1,5 @@
-import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange, joinEventService, getAllEventsService,
+import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange,
+    joinEventService, getAllEventsService,
     getCategoriesService, getCategoriesWithSubcategories
  } from '../services/eventService.js';
 
@@ -61,7 +62,7 @@ export const getEventsByCategoryAndSubcategory = async (req, res) => {
     const { categoryId, subcategoryId } = req.query;
     console.log(categoryId, subcategoryId);
     if (!categoryId || !subcategoryId) {
-        return res.status(400).json({ message: 'Kategori ID ve Alt Kategori ID gereklidir' });
+        return res.status(400).json({ message: 'Category ID and SubCategory ID are required' });
     }
 
     try {
@@ -70,7 +71,7 @@ export const getEventsByCategoryAndSubcategory = async (req, res) => {
 
         res.status(200).json({ events, toplam: eventCount });
     } catch (error) {
-        res.status(500).json({ message: 'Etkinlikler getirilemedi', error: error.message });
+        res.status(500).json({ message: 'Failed to retrieve events', error: error.message });
     }
 };
 

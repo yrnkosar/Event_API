@@ -27,7 +27,8 @@ async function insertUsers(users) {
                   gender: user["Cinsiyet"],
                   phone_number: user["Telefon Numarası"],
                   profile_picture_url: user["Profil Fotoğrafı"],
-                  role: user["Rol"]
+                  role: user["Rol"],
+                  last_notification_check: user["Son Bildirim Kontrol Zamanı"]
               }, { transaction: t });
           }
       });
@@ -57,7 +58,8 @@ async function insertEvents(events) {
           duration: event["Etkinlik Süresi"], 
           latitude: event.Konum?.latitude || null,
           longitude: event.Konum?.longitude || null,
-          user_id: event["Kullanıcı ID"]
+          user_id: event["Kullanıcı ID"],
+          status: event["Durum"]
         }, { transaction: t });
       }
     });
@@ -107,8 +109,6 @@ async function insertMessages(messages) {
       "Gönderim Zamanı": sent_time 
     } = message;
 
-    console.log(`Eklenecek Mesaj: ${JSON.stringify(message)}`);
-
     if (!message_text || !sent_time) {
       console.log(`Hatalı mesaj verisi: message_text: ${message_text}, sent_time: ${sent_time}`);
       continue;
@@ -148,7 +148,6 @@ async function insertSubcategories(subcategories) {
   try {
     await sequelize.transaction(async (t) => {
       for (const subcategory of subcategories) {
-        console.log('Eklenecek alt kategori:', subcategory); 
         await Subcategory.create({
           id: subcategory["Alt Kategori ID"],
           category_id: subcategory["Kategori ID"],
@@ -185,7 +184,6 @@ async function insertPoints(points) {
       for (const point of points) {
         await Point.create({
           user_id: point["Kullanıcı ID"],
-          event_id: point["Etkinlik ID"],
           points: point["Puanlar"],
           earned_date: point["Kazanılan Tarih"]
         }, { transaction: t });
@@ -207,10 +205,8 @@ async function hashUserPasswords() {
 
         user.password = hashedPassword;
         await user.save();
-        console.log(`Şifre güncellendi: ${user.username}`);
       }
     }
-
     console.log('Tüm kullanıcı şifreleri başarıyla güncellendi.');
   } catch (error) {
     console.error('Şifre güncelleme sırasında bir hata oluştu:', error);

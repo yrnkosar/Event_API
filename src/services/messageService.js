@@ -64,7 +64,6 @@ export const getNewNotifications = async (userId) => {
             order: [['sent_time', 'ASC']],
         });
 
-        // Kullanıcının son bildirim kontrol zamanını güncelle
         await user.update({ last_notification_check: new Date() });
 
         return newNotifications;

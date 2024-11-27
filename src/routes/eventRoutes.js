@@ -1,7 +1,7 @@
 import express from 'express';
 import { createEvent, deleteEvent, updateEvent, getEvent, getEventsByCategoryAndSubcategory, controllergetEventsByDate, joinEvent, getAllEvents,
     getCategories, getCategoriesController, } from '../controllers/eventController.js';
-import { protect, adminOnly } from '../utils/authMiddleware.js';
+import { protect } from '../utils/authMiddleware.js';
 
 const router = express.Router();
 

@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './user.js';
-import Event from './event.js';
 
 const Point = sequelize.define('Point', {
     user_id: {
@@ -27,6 +26,5 @@ const Point = sequelize.define('Point', {
 });
 
 Point.belongsTo(User, { foreignKey: 'user_id' });
-Point.belongsTo(Event, { foreignKey: 'event_id' });
 
 export default Point;

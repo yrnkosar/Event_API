@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import Event from '../models/event.js';
 import Interest from '../models/interest.js';
 import Subcategory from '../models/subcategory.js';
@@ -59,6 +60,9 @@ export const getPersonalizedEventRecommendations = async (userId) => {
                 subcategory_id: { [Op.in]: allRelevantSubcategoryIds },
                 id: { [Op.notIn]: pastEventIds }, 
                 user_id: { [Op.ne]: userId }, 
+                [Op.and]: [
+                    Sequelize.literal(`CONCAT(date, ' ', time) > NOW()`), 
+                ],
                 status: true,
             },
             include: [
@@ -85,72 +89,6 @@ export const getPersonalizedEventRecommendations = async (userId) => {
         throw new Error(`Failed to generate recommendations: ${error.message}`);
     }
 };
-
-
-
-/*export const getPersonalizedEventRecommendations = async (userId) => {
-    try {
-        const userInterests = await Interest.findAll({
-            where: { user_id: userId },
-            include: [{ model: Subcategory, include: [Category] }],
-        });
-        const interestSubcategoryIds = userInterests.map((interest) => interest.subcategory_id);
-
-        const relatedSubcategories = await Subcategory.findAll({
-            where: { category_id: { [Op.in]: userInterests.map((interest) => interest.Subcategory.category_id) } },
-        });
-        const relatedSubcategoryIds = relatedSubcategories.map((subcategory) => subcategory.id);
-
-        const pastParticipationEvents = await Participant.findAll({
-            where: { user_id: userId },
-            include: [{ model: Event, include: [Subcategory] }],
-        });
-        const pastEventSubcategoryIds = pastParticipationEvents.map((participation) => participation.Event.subcategory_id);
-        const categoryIdsForPastEvents = pastParticipationEvents.map((participation) => participation.Event.Subcategory.category_id);
-        const otherSubcategoriesForPastEvents = await Subcategory.findAll({
-             where: { category_id: { [Op.in]: categoryIdsForPastEvents } },
-        });
-        const otherSubcategoryIdsForPastEvents = otherSubcategoriesForPastEvents.map((subcategory) => subcategory.id);
-
-
-        const allRelevantSubcategoryIds = [...new Set([
-            ...interestSubcategoryIds, 
-            ...relatedSubcategoryIds, 
-            ...pastEventSubcategoryIds,
-            ...otherSubcategoryIdsForPastEvents,
-        ])];
-
-        const user = await User.findByPk(userId);
-        const userLatitude = user.location_latitude;
-        const userLongitude = user.location_longitude;
-
-        const recommendedEvents = await Event.findAll({
-            where: {
-                subcategory_id: { [Op.in]: allRelevantSubcategoryIds },
-                status: true,
-            },
-            include: [
-                { 
-                    model: Subcategory 
-                }, 
-                { 
-                    model: User, 
-                    attributes: ['id', 'username']
-                }],
-        });
-
-        const sortedEvents = recommendedEvents.map((event) => {
-            const distance = calculateDistance(userLatitude, userLongitude, event.latitude, event.longitude);
-            return { event, distance };
-        })
-        //.filter((item) => item.distance < 50)
-        .sort((a, b) => a.distance - b.distance);
-
-        return sortedEvents.map((item) => item.event);
-    } catch (error) {
-        throw new Error(`Failed to generate recommendations: ${error.message}`);
-    }
-};*/
 
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; 

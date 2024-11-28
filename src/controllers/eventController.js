@@ -1,6 +1,6 @@
 import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange,
     joinEventService, getAllEventsService,
-    getCategoriesService, getCategoriesWithSubcategories
+    getCategoriesService, getCategoriesWithSubcategories,getInactiveEvents
  } from '../services/eventService.js';
 
 export const createEvent = async (req, res) => {
@@ -120,5 +120,20 @@ export const getCategoriesController = async (req, res) => {
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: 'Failed to retrieve categories' });
+    }
+};
+
+export const fetchInactiveEvents = async (req, res) => {
+    try {
+        const events = await getInactiveEvents();
+        res.status(200).json({
+            success: true,
+            events,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching inactive events: ' + error.message,
+        });
     }
 };

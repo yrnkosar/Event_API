@@ -16,6 +16,7 @@ import {
     getTotalEventCount,
     getEventCountByMonth,
     getEventCountByCategory,
+    getInactiveEvents
 } from '../services/adminService.js';
 
 export const getUsers = async (req, res) => {
@@ -192,5 +193,20 @@ export const getEventsByCategory = async (req, res) => {
     } catch (error) {
         console.error('Error fetching events by category:', error);
         res.status(500).json({ error: 'Failed to fetch events by category.' });
+    }
+};
+
+export const fetchInactiveEvents = async (req, res) => {
+    try {
+        const events = await getInactiveEvents();
+        res.status(200).json({
+            success: true,
+            events,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching inactive events: ' + error.message,
+        });
     }
 };

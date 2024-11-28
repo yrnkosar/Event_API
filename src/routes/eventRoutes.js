@@ -1,6 +1,6 @@
 import express from 'express';
 import { createEvent, deleteEvent, updateEvent, getEvent, getEventsByCategoryAndSubcategory, controllergetEventsByDate, joinEvent, getAllEvents,
-    getCategories, getCategoriesController, fetchInactiveEvents } from '../controllers/eventController.js';
+    getCategories, getCategoriesController, leaveEvent } from '../controllers/eventController.js';
 import { protect } from '../utils/authMiddleware.js';
 
 const router = express.Router();
@@ -22,10 +22,10 @@ router.get('/event-daterange', protect, controllergetEventsByDate);
 
 router.post('/join/:eventId', protect, joinEvent); 
 
+router.delete('/leave/:eventId', protect, leaveEvent);
+
 router.get('/categories', protect, getCategories);
 
 router.get('/subcategories', protect, getCategoriesController);
-
-router.get('/inactive-events', fetchInactiveEvents);
 
 export default router;

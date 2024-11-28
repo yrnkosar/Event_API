@@ -13,6 +13,7 @@ import { getUsers, deleteUser, getEvents, deleteEvent,
     getTotalEvents,
     getEventsByMonth,
     getEventsByCategory,
+    fetchInactiveEvents
  } from '../controllers/adminController.js';
  import { protect, adminOnly } from '../utils/authMiddleware.js';
 
@@ -27,6 +28,7 @@ router.get('/user/:id', protect, getOneUserById);
 router.get('/events', protect, adminOnly, getEvents);
 router.delete('/events/:id', protect, adminOnly, deleteEvent);
 router.patch('/events/:eventId/status', protect, adminOnly, changeEventStatus);
+router.get('/inactive-events', protect, adminOnly, fetchInactiveEvents);
 
 
 router.post('/add-categories', protect, adminOnly, addCategory);

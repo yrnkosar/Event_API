@@ -1,6 +1,6 @@
 import { createEventService, deleteEventService, updateEventService, getEventService, getEventsByCategory, getEventsByDateRange,
     joinEventService, getAllEventsService,
-    getCategoriesService, getCategoriesWithSubcategories,getInactiveEvents
+    getCategoriesService, getCategoriesWithSubcategories, leaveEventService
  } from '../services/eventService.js';
 
 export const createEvent = async (req, res) => {
@@ -105,6 +105,24 @@ export const joinEvent = async (req, res) => {
     }
 };
 
+export const leaveEvent = async (req, res) => {
+    const userId = req.user.id; 
+    const eventId = req.params.eventId; 
+
+    try {
+        const result = await leaveEventService(userId, eventId);
+        res.status(200).json({
+            success: true,
+            message: result.message,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to leave the event.',
+        });
+    }
+};
+
 export const getCategories = async (req, res) => {
     try {
         const categories = await getCategoriesService();
@@ -123,17 +141,3 @@ export const getCategoriesController = async (req, res) => {
     }
 };
 
-export const fetchInactiveEvents = async (req, res) => {
-    try {
-        const events = await getInactiveEvents();
-        res.status(200).json({
-            success: true,
-            events,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching inactive events: ' + error.message,
-        });
-    }
-};

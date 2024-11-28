@@ -5,7 +5,8 @@ import {
     updateProfileService,
     getUserProfileService,
     forgotPasswordService,
-    getUserEventsService
+    getUserEventsService,
+    addUserInterestsService
 } from '../services/userService.js';
 
 export const registerUser = async (req, res) => {
@@ -86,5 +87,30 @@ export const getUserEventsController = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get events', error: error.message });
+    }
+};
+
+export const addUserInterests = async (req, res) => {
+    const userId = req.user.id; 
+    const { subcategoryIds } = req.body;
+
+    if (!Array.isArray(subcategoryIds) || subcategoryIds.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Subcategory IDs are required and must be an array.',
+        });
+    }
+
+    try {
+        const result = await addUserInterestsService(userId, subcategoryIds);
+        res.status(200).json({
+            success: true,
+            message: result.message,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to add interests.',
+        });
     }
 };

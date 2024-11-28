@@ -164,6 +164,25 @@ export const joinEventService = async (userId, eventId) => {
     }
 };
 
+export const leaveEventService = async (userId, eventId) => {
+    try {
+        const participant = await Participant.findOne({
+            where: { user_id: userId, event_id: eventId },
+        });
+
+        if (!participant) {
+            throw new Error('You are not participating in this event.');
+        }
+
+        await participant.destroy(); 
+
+        return { message: 'Successfully left the event.' };
+    } catch (error) {
+        console.error('Error in leaveEventService:', error);
+        throw new Error(error.message || 'Unknown error occurred while leaving the event.');
+    }
+};
+
 export const getCategoriesService = async () => {
     return await Category.findAll();
 };
@@ -174,17 +193,3 @@ export const getCategoriesWithSubcategories = async () => {
     });
 };
 
-export const getInactiveEvents = async () => {
-    try {
-        const events = await Event.findAll({
-            where: { status: false }, 
-            include: [
-                { model: User, attributes: ['id', 'username'] }, 
-                { model: Subcategory, attributes: ['id', 'name'] } 
-            ],
-        });
-        return events;
-    } catch (error) {
-        throw new Error('Error fetching inactive events: ' + error.message);
-    }
-};

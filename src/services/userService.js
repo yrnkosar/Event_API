@@ -11,7 +11,7 @@ import nodemailer from 'nodemailer';
 dotenv.config();
 
 export const registerUserService = async (userData) => {
-    const { password, subcategory_ids, ...otherData } = userData; 
+    const { password, ...otherData } = userData; 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
@@ -19,15 +19,6 @@ export const registerUserService = async (userData) => {
         password: hashedPassword,
         role: 'kullanıcı',
     });
-
-    if (subcategory_ids && subcategory_ids.length > 0) {
-        const interests = subcategory_ids.map(subcategory_id => ({
-            user_id: newUser.id,
-            subcategory_id
-        }));
-
-        await Interest.bulkCreate(interests);
-    }
 
     return newUser;
 };
@@ -107,10 +98,10 @@ const sendResetEmail = async (toEmail, resetUrl) => {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`Şifre sıfırlama e-postası ${toEmail} adresine gönderildi.`);
+        console.log(`Password reset email has been sent to ${toEmail}`);
     } catch (error) {
-        console.error('E-posta gönderim hatası:', error);
-        throw new Error('Şifre sıfırlama e-postası gönderilemedi');
+        console.error('Email sending error:', error);
+        throw new Error('Password reset email failed to send');
     }
 };
 
@@ -143,6 +134,34 @@ export const getUserEventsService = async (userId) => {
         };
     } catch (error) {
         throw new Error('Error retrieving events: ' + error.message);
+    }
+};
+
+export const addUserInterestsService = async (userId, subcategoryIds) => {
+    try {
+        const validSubcategories = await Subcategory.findAll({
+            where: { id: subcategoryIds },
+            attributes: ['id'],
+        });
+
+        const validSubcategoryIds = validSubcategories.map((sub) => sub.id);
+
+        if (validSubcategoryIds.length === 0) {
+            throw new Error('No valid subcategories provided.');
+        }
+
+        const interests = validSubcategoryIds.map((subcategoryId) => ({
+            user_id: userId,
+            subcategory_id: subcategoryId,
+        }));
+
+        await Interest.destroy({ where: { user_id: userId } });
+        await Interest.bulkCreate(interests);
+
+        return { message: 'Interests successfully updated.' };
+    } catch (error) {
+        console.error('Error in addUserInterestsService:', error);
+        throw new Error(error.message || 'Failed to add interests.');
     }
 };
 

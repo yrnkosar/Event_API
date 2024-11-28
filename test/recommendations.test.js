@@ -35,7 +35,7 @@ describe('Recommendation Service', () => {
 
     recommendations.forEach((event) => {
       const distance = calculateDistance(userLatitude, userLongitude, event.latitude, event.longitude);
-      //expect(distance).to.be.lessThan(50); 
+      expect(distance).to.be.lessThan(50); 
     });
   });
 

@@ -6,7 +6,8 @@ import {
     getUserProfileService,
     forgotPasswordService,
     getUserEventsService,
-    addUserInterestsService
+    addUserInterestsService,
+    calculateRoutesService
 } from '../services/userService.js';
 
 export const registerUser = async (req, res) => {
@@ -114,3 +115,20 @@ export const addUserInterests = async (req, res) => {
         });
     }
 };
+
+export const calculateRoutesController = async (req, res) => {
+    try {
+      const userId = req.user.id; 
+      const { eventId } = req.params; 
+  
+      if (!userId || !eventId) {
+        return res.status(400).json({ message: 'User and event information are required' });
+      }
+  
+      const routes = await calculateRoutesService(userId, eventId);
+      res.status(200).json({ success: true, routes });
+    } catch (error) {
+      console.error('Error in calculateRoutesController:', error.message);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };

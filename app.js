@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import databaseRouter from './src/routes/databaseRouter.js'; 
+import databaseRouter from './src/routes/databaseRoutes.js'; 
 import userRouter from './src/routes/userRoutes.js';
 import adminRouter from './src/routes/adminRoutes.js';
 import eventRouter from './src/routes/eventRoutes.js';
@@ -15,10 +15,10 @@ app.use(cors());
 
 sequelize.authenticate()
     .then(() => {
-        console.log('Veritabanı bağlantısı başarılı.');
+        console.log('Database connection successful.');
     })
     .catch(err => {
-        console.error('Veritabanı bağlantısı hatası:', err);
+        console.error('Database connection error:', err);
     });
 
 app.use(express.json());

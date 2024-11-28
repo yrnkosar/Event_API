@@ -7,6 +7,7 @@ import Participant from '../models/participant.js';
 import Subcategory from '../models/subcategory.js'; 
 import Interest from '../models/interest.js';
 import nodemailer from 'nodemailer'; 
+import { getRoutesFromMapbox } from '../utils/mapbox.js';
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ export const loginUserService = async (username, password) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error('Invalid credentials');
 
-    const token = jwt.sign({ id: user.id, role: user.role, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, role: user.role, username: user.username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
     return { token };
 };
 
@@ -164,4 +165,22 @@ export const addUserInterestsService = async (userId, subcategoryIds) => {
         throw new Error(error.message || 'Failed to add interests.');
     }
 };
+
+export const calculateRoutesService = async (userId, eventId) => {
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) throw new Error('User not found');
+      const userCoordinates = [user.location_longitude, user.location_latitude];
+  
+      const event = await Event.findByPk(eventId);
+      if (!event) throw new Error('Event not found');
+      const eventCoordinates = [event.longitude, event.latitude];
+  
+      const routes = await getRoutesFromMapbox(userCoordinates, eventCoordinates);
+      return routes;
+    } catch (error) {
+      console.error('Error in calculateRoutesService:', error.message);
+      throw new Error('Failed to calculate routes');
+    }
+  };
 

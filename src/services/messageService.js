@@ -64,7 +64,15 @@ export const getNewNotifications = async (userId) => {
             order: [['sent_time', 'ASC']],
         });
 
-        await user.update({ last_notification_check: new Date() });
+        setTimeout(async () => {
+            try {
+                await user.update({ last_notification_check: new Date() });
+            } catch (updateError) {
+                console.error('Error updating notification check time:', updateError.message);
+            }
+        }, 30000);
+
+        //await user.update({ last_notification_check: new Date() });
 
         return newNotifications;
     } catch (error) {

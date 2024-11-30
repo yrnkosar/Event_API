@@ -187,9 +187,7 @@ export const getCategoriesService = async () => {
     return await Category.findAll();
 };
 
-export const getCategoriesWithSubcategories = async () => {
-    return await Category.findAll({
-        include: [{ model: Subcategory }]
-    });
+export const getSubcategoriesService = async () => {
+    return await Subcategory.findAll();
 };
 

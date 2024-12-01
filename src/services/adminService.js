@@ -191,7 +191,13 @@ export const getInactiveEvents = async () => {
             where: { status: false }, 
             include: [
                 { model: User, attributes: ['id', 'username'] }, 
-                { model: Subcategory, attributes: ['id', 'name'] } 
+                { 
+                    model: Subcategory, 
+                    attributes: ['id', 'name'],
+                    include: [
+                        { model: Category, attributes: ['id', 'name'] }
+                    ]
+                }
             ],
         });
         return events;
@@ -199,3 +205,19 @@ export const getInactiveEvents = async () => {
         throw new Error('Error fetching inactive events: ' + error.message);
     }
 };
+
+
+/*export const getInactiveEvents = async () => {
+    try {
+        const events = await Event.findAll({
+            where: { status: false }, 
+            include: [
+                { model: User, attributes: ['id', 'username'] }, 
+                { model: Subcategory, attributes: ['id', 'name'] } 
+            ],
+        });
+        return events;
+    } catch (error) {
+        throw new Error('Error fetching inactive events: ' + error.message);
+    }
+};*/
